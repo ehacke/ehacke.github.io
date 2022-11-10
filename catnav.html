@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="timeline" style="height: 1800px;"></div>
+<script>
+    google.charts.load('current', {'packages':['timeline']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var container = document.getElementById('timeline');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'Layer' });
+        dataTable.addColumn({ type: 'string', id: 'Function' });
+        dataTable.addColumn({ type: 'number', id: 'Start' });
+        dataTable.addColumn({ type: 'number', id: 'End' });
+
+        var searchApiStart = 4350;
+        var searchApiEnd = searchApiStart + 1250;
+        var suggestionsStart = searchApiEnd;
+
+        dataTable.addRows([
+            [ 'Frontend','HTML', 0, 1100 ],
+            [ 'Frontend','Resources', 1100, 2100 ],
+            [ 'Frontend','Scripting', 2100, 4200 ],
+            [ 'Frontend','Banners API', 4200, 4350 ],
+            [ 'Backend','RealTimeCompositeProductFirstCatNavSearcher', 4200, 4350 ],
+            [ 'Data','ES', 4200, 4300 ],
+
+            [ 'Frontend','Cat Nav API', searchApiStart, searchApiEnd ],
+            [ 'Backend','getResponseWithContext', searchApiStart + 15, searchApiStart + 700 ],
+            [ 'Data','ES', searchApiStart + 43, searchApiStart + 165 ],
+            [ 'Backend','getRankedCandidates', searchApiStart + 519, searchApiStart + 689 ],
+            [ 'Backend','extractFeatures', searchApiStart + 523, searchApiStart + 619 ],
+            [ 'Backend','computeFeatures', searchApiStart + 619, searchApiStart + 667 ],
+            [ 'Backend','executeModels', searchApiStart + 667, searchApiStart + 689 ],
+
+            [ 'Backend','getRetrievalResponse', searchApiStart + 15, searchApiStart + 252 ],
+            [ 'Data','ES', searchApiStart + 48, searchApiStart + 384 ],
+
+            [ 'Backend','getInitialRetrievalResponse.APPAREL_PERSONALIZED_PRICE_POINT', searchApiStart + 15, searchApiStart + 500 ],
+            [ 'Data','ES', searchApiStart + 46, searchApiStart + 195 ],
+
+            [ 'Backend','getInitialRetrievalResponse.NEW_BRANDS', searchApiStart + 15, searchApiStart + 190 ],
+            [ 'Data','ES', searchApiStart + 46, searchApiStart + 180 ],
+
+            [ 'Backend','getQuickAddAndCaseSizeTextForProducts', searchApiStart + 741, searchApiStart + 800 ],
+            [ 'Data','sql', searchApiStart + 741, searchApiStart + 800 ],
+
+            [ 'Backend','getProductPromoPrices', searchApiStart + 812, searchApiStart + 980 ],
+            [ 'Data','sql', searchApiStart + 812, searchApiStart + 980 ],
+
+            [ 'Backend','apparelCategoryProductCache_Boolean', searchApiStart + 1000, searchApiStart + 1030 ],
+            [ 'Data','sql', searchApiStart + 1000, searchApiStart + 1030 ],
+
+            [ 'Frontend','Image Loading', searchApiEnd, searchApiEnd + 275 ],
+        ]);
+
+        chart.draw(dataTable);
+    }
+</script>
+
+</body>
+</html>
