@@ -24,7 +24,7 @@
     var bannersEnd = bannersStart + 150;
     var searchApiStart = 0;
     var searchApiEnd = searchApiStart + 1100;
-    var suggestionsStart = searchApiEnd;
+    var suggestionsStart = 0;
 
     dataTable.addRows([
       [ 'Frontend','HTML', 0, 400 ],
@@ -70,7 +70,7 @@
       [ 'Frontend','Suggestions API', suggestionsStart, suggestionsStart + 100 ],
       [ 'Frontend','Suggestions API', suggestionsStart, suggestionsStart + 100 ],
 
-      [ 'Frontend','Image Loading', suggestionsStart + 100, suggestionsStart + 200 ],
+      [ 'Frontend','Image Loading', searchApiEnd, searchApiEnd + 100 ],
     ]);
 
     chart.draw(dataTable);
