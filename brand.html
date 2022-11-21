@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="timeline" style="height: 1800px;"></div>
+<script>
+    google.charts.load('current', {'packages':['timeline']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var container = document.getElementById('timeline');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'Layer' });
+        dataTable.addColumn({ type: 'string', id: 'Function' });
+        dataTable.addColumn({ type: 'number', id: 'Start' });
+        dataTable.addColumn({ type: 'number', id: 'End' });
+
+        var searchApiStart = 1700;
+        var searchApiEnd = searchApiStart + 2200;
+        var suggestionsStart = searchApiEnd;
+
+        dataTable.addRows([
+            [ 'Frontend','HTML', 0, 830 ],
+            [ 'Frontend','Resources', 830, 1100 ],
+            [ 'Frontend','Scripting', 1100, 1700 ],
+            [ 'Frontend','Brand Product Search API', searchApiStart, searchApiEnd ],
+            [ 'Backend','getRetrievalResponse', searchApiStart + 130, searchApiStart + 380 ],
+            [ 'Data','ES', searchApiStart + 160, searchApiStart + 320 ],
+
+            [ 'Backend','getRankedCandidates', searchApiStart + 390, searchApiStart + 2000 ],
+            [ 'Backend','getRetrievalResponse', searchApiStart + 390, searchApiStart + 630 ],
+            [ 'Data','ES', searchApiStart + 430, searchApiStart + 610 ],
+            [ 'Backend','getRetrievalResponse', searchApiStart + 730, searchApiStart + 960 ],
+            [ 'Data','ES', searchApiStart + 760, searchApiStart + 940 ],
+            [ 'Backend','getRetrievalResponse', searchApiStart + 1000, searchApiStart + 1300 ],
+            [ 'Data','ES', searchApiStart + 1200, searchApiStart + 1300 ],
+            [ 'Backend','getRetrievalResponse', searchApiStart + 1400, searchApiStart + 1600 ],
+            [ 'Data','ES', searchApiStart + 1430, searchApiStart + 1600 ],
+            [ 'Backend','getRetrievalResponse', searchApiStart + 1600, searchApiStart + 1800 ],
+            [ 'Data','ES', searchApiStart + 1650, searchApiStart + 1800 ],
+            [ 'Backend','rankResults', searchApiStart + 1800, searchApiStart + 2000 ],
+            [ 'Backend','postProcessResponseBuilder', searchApiStart + 2000, searchApiStart + 2060 ],
+            [ 'Data','SQL', searchApiStart + 2000, searchApiStart + 2060 ],
+            [ 'Backend','wire', searchApiStart + 2080, searchApiStart + 2110 ],
+            [ 'Frontend','Tiles', searchApiEnd, searchApiEnd + 150 ],
+        ]);
+
+        chart.draw(dataTable);
+    }
+</script>
+</body>
+</html>
