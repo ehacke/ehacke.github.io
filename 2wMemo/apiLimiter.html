@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Requests</title>
+</head>
+<body>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div style="text-align: center;">
+    <a style="padding: 0px 20px" href="apiLimiter.html">Overall</a>
+    <a style="padding: 0px 20px" href="p50.html">P50</a>
+    <a style="padding: 0px 20px" href="p90.html">P90</a>
+    <a style="padding: 0px 20px" href="p95.html">P95</a>
+    <a style="padding: 0px 20px" href="p99.html">P99</a>
+</div>
+
+<h2 style="text-align: center;">All Requests</h2>
+
+<div id="retrieval_duration" style="height: auto"></div>
+<div id="ranking_duration" style="height: auto"></div>
+<div id="enrichment_duration" style="height: auto"></div>
+<div id="idle_duration" style="height: auto"></div>
+
+<div id="order" style="height: auto"></div>
+
+<h2 style="text-align: center;">Retrieval Details</h2>
+
+<div id="getFallbackRetrievalResponse" style="height: auto"></div>
+<div id="getRetrievalResponse" style="height: auto"></div>
+<div id="getInitialRetrievalResponse.INSIDER" style="height: auto"></div>
+<div id="getInitialRetrievalResponse.NEW_BRANDS" style="height: auto"></div>
+<div id="getPromotedPlacementRetrievalResponse" style="height: auto"></div>
+
+<div id="retrieval_order" style="height: auto"></div>
+<script>
+    fetch('./1675987897126-1676592697126:apiLimiter.json')
+        .then(async (response) => {
+            const apiLimiterData = await response.json();
+
+            google.charts.load("current", {packages: ["corechart"]});
+
+            const COLORS = {
+                enrichment: '#714A40',
+                idle: '#7A989C',
+                ranking: '#C4C6D5',
+                retrieval: '#769FBA',
+                getFallbackRetrievalResponse: '#714A40',
+                'getInitialRetrievalResponse.INSIDER': '#7A989C',
+                'getInitialRetrievalResponse.NEW_BRANDS': '#C4C6D5',
+                getPromotedPlacementRetrievalResponse: '#769FBA',
+                'getRetrievalResponse': '#B0524D',
+            };
+
+            function drawDurationChart(targetId, durations, title, color) {
+                var data = google.visualization.arrayToDataTable([
+                    ['Time (ms)'],
+                    ...durations.map((value) => [value])
+                ]);
+
+                var options = {
+                    title,
+                    legend: {position: 'none'},
+                    colors: [color],
+                    histogram: {
+                        lastBucketPercentile: 5,
+                        bucketSize: 5,
+                        maxValue: 1000,
+                    },
+                    vAxis: {
+                        maxValue: 200,
+                    }
+                };
+
+                var chart = new google.visualization.Histogram(document.getElementById(targetId));
+                chart.draw(data, options);
+            }
+
+            function drawOrderChart(targetId, sources, title) {
+                const keys = Object.keys(sources).filter((key) => key !== 'retrievals');
+                keys.sort();
+
+                const maxDimension = Math.max(...keys.map((key) => sources[key].order.length));
+
+                const input = keys.reduce((result, key, index) => {
+                    result[0] = (result[0] || []).concat(key);
+
+                    for (let i = 0; i <= maxDimension; i++) {
+                        result[i + 1] = (result[i + 1] || []);
+                        result[i + 1][index] = sources[key].order[i] ? (sources[key].order[i] - 1) : null;
+                    }
+
+                    return result;
+                }, []);
+
+                var data = google.visualization.arrayToDataTable(input);
+
+                var options = {
+                    title,
+                    legend: {position: 'top'},
+                    interpolateNulls: false,
+                    colors: ['#714A40', '#7A989C', '#C4C6D5', '#769FBA', '#B0524D'],
+                    histogram: {
+                        // lastBucketPercentile: 5,
+                        bucketSize: 1,
+                    },
+                    hAxis: {
+                        minValue: 1,
+                    }
+                };
+
+                var chart = new google.visualization.Histogram(document.getElementById(targetId));
+                chart.draw(data, options);
+            }
+
+            Object.keys(apiLimiterData).filter((key) => key !== 'retrievals').forEach((key) => {
+                google.charts.setOnLoadCallback(() => drawDurationChart(key + '_duration', apiLimiterData[key].duration, key + ' duration (ms)', COLORS[key]));
+            });
+
+            google.charts.setOnLoadCallback(() => drawOrderChart('order', apiLimiterData, 'Ordering'));
+
+            Object.keys(apiLimiterData.retrievals).filter((key) => key !== 'retrievals').forEach((key) => {
+                console.log('key', key, COLORS);
+                google.charts.setOnLoadCallback(() => drawDurationChart(key, apiLimiterData.retrievals[key].duration, key + ' duration (ms)', COLORS[key]));
+            });
+
+            google.charts.setOnLoadCallback(() => drawOrderChart('retrieval_order', apiLimiterData.retrievals, 'Ordering'));
+        });
+</script>
+</body>
+</html>'
