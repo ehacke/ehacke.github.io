@@ -24,6 +24,8 @@
 
 <div id="order" style="height: auto"></div>
 
+<div id="pie" style="height: 500px"></div>
+
 <h2 style="text-align: center;">Retrieval Details</h2>
 
 <div id="getFallbackRetrievalResponse" style="height: auto"></div>
@@ -76,6 +78,45 @@
                 chart.draw(data, options);
             }
 
+            const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length;
+
+            function median(values) {
+                if (values.length === 0) throw new Error("No inputs");
+
+                values.sort(function (a, b) {
+                    return a - b;
+                });
+
+                var half = Math.floor(values.length / 2);
+
+                if (values.length % 2)
+                    return values[half];
+
+                return (values[half - 1] + values[half]) / 2.0;
+            }
+
+            const drawPieChart = (targetId, sources, title) => {
+                const keys = Object.keys(sources).filter((key) => key !== 'retrievals');
+                keys.sort();
+
+                const input = keys.reduce((result, key) => {
+                    result.push([key, median(sources[key].duration)]);
+                    return result;
+                }, [['Component', 'Avg Latency']]);
+
+                console.log(input)
+
+                const data = google.visualization.arrayToDataTable(input)
+
+                var chart = new google.visualization.PieChart(document.getElementById(targetId));
+
+                chart.draw(data, {
+                    title,
+                    pieHole: 0.4,
+                    colors: ['#714A40', '#7A989C', '#C4C6D5', '#769FBA', '#B0524D'],
+                });
+            };
+
             function drawOrderChart(targetId, sources, title) {
                 const keys = Object.keys(sources).filter((key) => key !== 'retrievals');
                 keys.sort();
@@ -122,6 +163,8 @@
             });
 
             google.charts.setOnLoadCallback(() => drawOrderChart('order', apiLimiterData, 'Ordering'));
+
+            google.charts.setOnLoadCallback(() => drawPieChart('pie', apiLimiterData, 'Latency Allocation'));
 
             Object.keys(apiLimiterData.retrievals).filter((key) => key !== 'retrievals').forEach((key) => {
                 console.log('key', key, COLORS);
